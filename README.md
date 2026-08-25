@@ -38,12 +38,12 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full diagram and request path.
 
 ## Running locally
 
-Requires Python 3.11+ and a Google AI Studio API key.
+Requires Python 3.10+ and a Google AI Studio API key.
 
 ```bash
 git clone https://github.com/Kingnanaweb3/revoye.git
 cd revoye
-pip install google-adk==2.6.2
+pip install -r requirements.txt
 ```
 
 Create `revoye_agent/.env`:
