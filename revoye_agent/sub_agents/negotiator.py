@@ -2,6 +2,7 @@ from google.adk.agents.llm_agent import Agent
 
 from ..models import build_model
 from ..resilience import degrade_on_model_error
+from ..identity import enforce_scope
 from ..armor import screen_tool_result
 from ..gateway import enforce_policy
 from google.adk.tools import load_memory
@@ -46,5 +47,5 @@ supplier_negotiator = Agent(
     after_agent_callback=save_to_memory,
     on_model_error_callback=degrade_on_model_error,
     after_tool_callback=screen_tool_result,
-    before_tool_callback=enforce_policy,
+    before_tool_callback=[enforce_scope, enforce_policy],
 )

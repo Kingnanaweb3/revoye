@@ -2,6 +2,7 @@ from google.adk.agents.llm_agent import Agent
 
 from .models import build_model
 from .resilience import degrade_on_model_error
+from .identity import enforce_scope
 from .armor import screen_tool_result
 
 from .sub_agents.forecaster import demand_forecaster
@@ -29,5 +30,6 @@ root_agent = Agent(
     sub_agents=[demand_forecaster, supplier_negotiator, logistics_tracker],
     after_agent_callback=save_to_memory,
     on_model_error_callback=degrade_on_model_error,
+    before_tool_callback=enforce_scope,
     after_tool_callback=screen_tool_result,
 )

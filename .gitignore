@@ -7,3 +7,5 @@ __pycache__/
 .adk/
 *.db
 .DS_Store
+node_modules/
+floor/
