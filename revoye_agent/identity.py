@@ -20,7 +20,12 @@ SCOPES = {
         "domains": {"inventory:read", "sales:read"},
     },
     "supplier_negotiator": {
-        "tools": {"draft_purchase_order", "load_memory", "fetch_supplier_message"},
+        "tools": {
+            "draft_purchase_order",
+            "fetch_supplier_message",
+            "recall_supplier_history",
+            "record_supplier_note",
+        },
         "domains": {"procurement:write", "supplier_comms:read", "memory:read"},
     },
     "logistics_tracker": {

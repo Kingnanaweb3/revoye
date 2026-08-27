@@ -9,3 +9,8 @@ __pycache__/
 .DS_Store
 node_modules/
 floor/
+firebase-key.json
+*serviceaccount*.json
+firebase-key.json
+*serviceaccount*.json
+.env.*

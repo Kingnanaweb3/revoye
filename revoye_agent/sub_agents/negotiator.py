@@ -8,6 +8,7 @@ from ..gateway import enforce_policy
 from google.adk.tools import load_memory
 
 from .inbox import fetch_supplier_message
+from .supplier_memory import recall_supplier_history, record_supplier_note
 from .memory import save_to_memory
 
 
@@ -38,12 +39,17 @@ supplier_negotiator = Agent(
     instruction=(
         "You are a supplier negotiation agent. Before drafting a PO, call "
         "fetch_supplier_message to read the supplier's latest "
-        "correspondence, then load_memory to check for past history with this "
+        "correspondence, then recall_supplier_history to check what was agreed with this "
         "supplier (prior terms, pricing, reliability). Then call "
         "draft_purchase_order with a reasonable quantity and the known "
-        "supplier, and summarize the PO, noting any relevant history found."
+        "supplier, and summarize the PO, noting any relevant history found. After a PO is drafted or terms are agreed, call record_supplier_note to store what was agreed for future sessions."
     ),
-    tools=[draft_purchase_order, load_memory, fetch_supplier_message],
+    tools=[
+        draft_purchase_order,
+        fetch_supplier_message,
+        recall_supplier_history,
+        record_supplier_note,
+    ],
     after_agent_callback=save_to_memory,
     on_model_error_callback=degrade_on_model_error,
     after_tool_callback=screen_tool_result,
