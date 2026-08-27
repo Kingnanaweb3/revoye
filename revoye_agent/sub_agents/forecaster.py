@@ -3,6 +3,7 @@ from google.adk.agents.llm_agent import Agent
 from ..models import build_model
 from ..resilience import degrade_on_model_error
 from ..identity import enforce_scope
+from ..catalog import describe
 from ..armor import screen_tool_result
 
 from .memory import save_to_memory
@@ -19,7 +20,12 @@ def check_stock_trend(sku: str, days: int = 30) -> dict:
         A dict with the trend direction and risk level.
     """
     # TODO: replace with a real query against your inventory/sales data
-    return {"sku": sku, "trend": "declining", "risk": "high"}
+    return {
+        "sku": sku,
+        "product": describe(sku),
+        "trend": "declining",
+        "risk": "high",
+    }
 
 
 demand_forecaster = Agent(

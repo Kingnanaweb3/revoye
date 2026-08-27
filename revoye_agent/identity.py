@@ -28,8 +28,9 @@ SCOPES = {
         "domains": {"logistics:read", "supplier_comms:read"},
     },
     "revoye_orchestrator": {
-        # The orchestrator routes; it holds no data entitlements of its own.
-        "tools": set(),
+        # The orchestrator may only delegate. It holds no data entitlements of
+        # its own and cannot call a single domain tool directly.
+        "tools": {"transfer_to_agent"},
         "domains": set(),
     },
 }
