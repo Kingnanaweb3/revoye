@@ -44,18 +44,16 @@ flowchart TB
     end
 
     SWARM --> GEM
-    MEM --> MBS[("InMemoryMemoryService<br/>→ VertexAiMemoryBankService")]
+    MEM --> MBS[("Firestore<br/>supplier_memory collection")]
 
-    subgraph GCP["Google Cloud — planned"]
+    subgraph GCP["Google Cloud — live"]
         CR["Cloud Run"]
         VX["Vertex AI"]
     end
 
-    GEM -.migrating to.-> VX
-    SWARM -.deploys to.-> CR
+    GEM --> VX
+    SWARM --> CR
 
-    classDef planned stroke-dasharray: 5 5
-    class GCP,CR,VX planned
 ```
 
 ## Request path
@@ -77,4 +75,4 @@ flowchart TB
 
 - Tools return fixed values. They are stubs standing in for inventory,
   procurement, and logistics connectors, not live integrations.
-- Dashed nodes are planned, not yet built.
+- Deployed at https://revoye-900638801452.us-central1.run.app
