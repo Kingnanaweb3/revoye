@@ -28,7 +28,12 @@ def _db():
     global _client
     with _lock:
         if _client is None:
-            _client = firestore.Client.from_service_account_json(KEY_PATH)
+            # Locally we use a downloaded service-account key. On Cloud Run
+            # there is no key file: the service identity is used instead.
+            if os.path.exists(KEY_PATH):
+                _client = firestore.Client.from_service_account_json(KEY_PATH)
+            else:
+                _client = firestore.Client()
         return _client
 
 
