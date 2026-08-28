@@ -62,7 +62,7 @@ around.
 
 | Component | Hook | What it does |
 |---|---|---|
-| Model Armor | `after_tool_callback` | Quarantines prompt injection and redacts PII in untrusted inbound messages |
+| Model Armor | `after_tool_callback` | Two-pass injection screening (patterns, then a model classifier) and PII redaction on untrusted inbound messages |
 | Agent Gateway | `before_tool_callback` | Blocks POs from quarantined suppliers or above a value threshold |
 | Agent Identity | `before_tool_callback` | Per-agent tool and data scoping, default-deny for anything unregistered |
 | Memory Bank | Firestore-backed tools | Negotiation history that survives sessions, processes and redeploys |
@@ -204,8 +204,9 @@ What have we previously agreed with Kettleworth Foundry?
   populate inventory from a retailer's own system.
 - `check_delivery_status` still returns fixed values. It stands in for a
   logistics provider integration.
-- Injection and PII detection are pattern-based, not classifier-based. Effective
-  on the demonstrated attacks; not a claim of completeness.
+- Injection screening runs two passes: regular expressions first, then a model
+  classifier for anything they clear. PII redaction is still pattern-only, so it
+  catches the contact formats it was written for and no others.
 - Suppliers, products and correspondence are fictional, written to exercise the
   guardrails.
 
@@ -225,6 +226,15 @@ message passed through because it arrived as a *tool result* rather than
 conversation history, while a benign message got blocked because the filter
 matched its own earlier quarantine notice. Screening at the model boundary cannot
 distinguish attacker-controlled text from the agent's own trusted output.
+
+**Patterns only catch the attacks you already imagined.** The first screen was
+regular expressions, which caught "ignore all previous instructions" and nothing
+phrased any other way. A polite note claiming a revised supply agreement, asking
+the agent to treat an account as pre-approved and not raise it with operations,
+went straight through. Screening now runs two passes: patterns first because they
+are free, then a model classifier for anything they clear. The classifier fails
+toward the pattern verdict rather than blocking everything, since a guardrail
+that breaks open under load is not a guardrail.
 
 **Persuading a model is not the same as constraining it.** Even with the message
 quarantined, the model attempted the purchase order anyway. Enforcement moved
