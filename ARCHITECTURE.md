@@ -27,9 +27,10 @@ flowchart TB
     TR --> T4
 
     subgraph GOV["Governance Layer — ADK callbacks"]
-        ARMOR["Model Armor<br/>after_tool_callback<br/>quarantine injection · redact PII"]
+        ARMOR["Model Armor<br/>after_tool_callback<br/>patterns + classifier<br/>quarantine · redact"]
         GATE["Agent Gateway<br/>before_tool_callback<br/>tainted source · value threshold"]
-        MEM["Memory Bank<br/>after_agent_callback<br/>on every sub-agent"]
+        IDENT["Agent Identity<br/>before_tool_callback<br/>per-agent scope · default deny"]
+        MEM["Memory Bank<br/>Firestore tools<br/>judgement, not facts"]
         RES["Resilience<br/>on_model_error_callback<br/>degrade, never fabricate"]
     end
 
@@ -61,7 +62,8 @@ flowchart TB
 1. Operator states a goal. The orchestrator picks a specialist and delegates.
 2. The specialist calls its tools. Anything arriving from outside the system
    (`fetch_supplier_message`) is screened by Model Armor at the tool boundary
-   before the model ever sees it.
+   before the model ever sees it — first by pattern, then by a model classifier
+   for anything the patterns clear.
 3. Armor records a per-supplier verdict in session state.
 4. The Agent Gateway reads that verdict before `draft_purchase_order` runs.
    A quarantined source or an over-threshold value means the tool never
