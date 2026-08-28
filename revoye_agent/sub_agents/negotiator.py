@@ -13,23 +13,23 @@ from .memory import save_to_memory
 
 
 def draft_purchase_order(sku: str, quantity: int, supplier: str) -> dict:
-    """Drafts a purchase order for a supplier based on stock needs.
+    """Drafts a purchase order and records it for approval and fulfilment.
+
+    The PO is written to the purchase_orders collection, so an order the swarm
+    raises outlives the session that raised it. Anything the Gateway holds or
+    denies never reaches this function at all.
 
     Args:
         sku: The product SKU to reorder.
         quantity: How many units to order.
-        supplier: The supplier name to send the PO to.
+        supplier: The supplier the order goes to.
 
     Returns:
-        A dict with the draft PO details and its status.
+        A dict with the PO reference and its status.
     """
-    # TODO: replace with a real call to your procurement/ERP system
-    return {
-        "sku": sku,
-        "quantity": quantity,
-        "supplier": supplier,
-        "status": "drafted",
-    }
+    from ..orders import write_order
+
+    return write_order(sku=sku, quantity=quantity, supplier=supplier)
 
 
 supplier_negotiator = Agent(

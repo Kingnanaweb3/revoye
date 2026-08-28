@@ -10,22 +10,22 @@ from .memory import save_to_memory
 
 
 def check_stock_trend(sku: str, days: int = 30) -> dict:
-    """Checks recent sales trend for a SKU and flags stockout risk.
+    """Checks live stock position for a SKU and flags stockout risk.
+
+    Reads the inventory collection in Firestore. Risk is weeks of cover
+    (units on hand divided by weekly sales) measured against the SKU's
+    reorder point.
 
     Args:
         sku: The product SKU to check.
-        days: How many past days of sales history to analyze.
+        days: Sales history window, retained for interface compatibility.
 
     Returns:
-        A dict with the trend direction and risk level.
+        A dict with the live stock position and a risk level.
     """
-    # TODO: replace with a real query against your inventory/sales data
-    return {
-        "sku": sku,
-        "product": describe(sku),
-        "trend": "declining",
-        "risk": "high",
-    }
+    from ..inventory import stock_position
+
+    return stock_position(sku)
 
 
 demand_forecaster = Agent(
