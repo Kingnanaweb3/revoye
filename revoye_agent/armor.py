@@ -31,12 +31,24 @@ PII_PATTERNS = [
 ]
 
 
-def _scan(text):
-    """Returns (injection_pattern_or_None, redacted_text, redaction_count)."""
+def _scan(text, use_classifier=True):
+    """Returns (injection_reason_or_None, redacted_text, redaction_count).
+
+    Two passes. Regular expressions run first because they are free and catch
+    the obvious cases. Anything they clear goes to a model-based classifier,
+    which generalises to attacks phrased in ways no pattern anticipated.
+    """
     hit = next(
         (p for p in INJECTION_PATTERNS if re.search(p, text, re.IGNORECASE)),
         None,
     )
+
+    if hit is None and use_classifier:
+        from .classifier import looks_manipulative
+
+        if looks_manipulative(text):
+            hit = "classifier: manipulation detected"
+
     redactions = 0
     for pattern, replacement in PII_PATTERNS:
         text, n = re.subn(pattern, replacement, text)
